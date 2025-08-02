@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Linha do Tempo de Líderes Históricos</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; color: #333; margin: 0; padding: 2rem; }
+    h1 { text-align: center; margin-bottom: 2rem; }
+    .filters { display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
+    .filters select { padding: 0.5rem; font-size: 1rem; }
+    .card { border-radius: 8px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .totalitario { background: #ffe5e5; }
+    .imperador { background: #e5f0ff; }
+    .presidente { background: #e5ffe5; }
+    .label { display: inline-block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Linha do Tempo de Líderes Históricos</h1>
+  <div class="filters">
+    <select id="tipoFiltro">
+      <option value="">Todos os Tipos</option>
+      <option value="imperador">Imperadores</option>
+      <option value="presidente">Presidentes</option>
+      <option value="totalitario">Totalitários</option>
+    </select>
+    <select id="continenteFiltro">
+      <option value="">Todos os Continentes</option>
+      <option value="Europa">Europa</option>
+      <option value="Ásia">Ásia</option>
+      <option value="África">África</option>
+      <option value="América">América</option>
+    </select>
+    <select id="seculoFiltro">
+      <option value="">Todos os Séculos</option>
+      <option value="VI">Século VI</option>
+      <option value="VIII">Século VIII</option>
+      <option value="XIII">Século XIII</option>
+      <option value="XVII">Século XVII</option>
+      <option value="XVIII">Século XVIII</option>
+      <option value="XIX">Século XIX</option>
+      <option value="XX">Século XX</option>
+    </select>
+  </div>
+  <div id="timeline"></div>
+  <script>
+    const dados = [
+      { nome: "Justinianus I", anos: "527–565", tipo: "imperador", origem: "Império Bizantino", continente: "Europa", seculo: "VI", feitos: "Reconquista do Mediterrâneo ocidental, Corpus Juris Civilis.", impacto: "Influenciou o Direito Ocidental por séculos." },
+      { nome: "Carlos Magno", anos: "768–814", tipo: "imperador", origem: "França", continente: "Europa", seculo: "VIII", feitos: "Unificação da Europa ocidental, Renascença Carolíngia.", impacto: "Precursor do ideal de Europa unificada." },
+      { nome: "Adolf Hitler", anos: "1933–1945", tipo: "totalitario", origem: "Alemanha", continente: "Europa", seculo: "XX", feitos: "Nazismo, Segunda Guerra Mundial, Holocausto.", impacto: "Reformulação da ordem mundial pós-guerra." },
+      { nome: "Getúlio Vargas", anos: "1930–1945, 1951–1954", tipo: "presidente", origem: "Brasil", continente: "América", seculo: "XX", feitos: "Criação da CLT, Estado Novo, nacionalizações.", impacto: "Base do modelo trabalhista brasileiro." },
+      { nome: "Joseph Stalin", anos: "1924–1953", tipo: "totalitario", origem: "URSS", continente: "Europa", seculo: "XX", feitos: "Industrialização forçada, Grande Expurgo, vitória na 2ª Guerra.", impacto: "Estabeleceu o bloco soviético e influenciou a Guerra Fria." },
+      { nome: "Benito Mussolini", anos: "1922–1943", tipo: "totalitario", origem: "Itália", continente: "Europa", seculo: "XX", feitos: "Criação do fascismo, aliança com Hitler, expansão colonial.", impacto: "Modelo para regimes autoritários no século XX." },
+      { nome: "Nelson Mandela", anos: "1994–1999", tipo: "presidente", origem: "África do Sul", continente: "África", seculo: "XX", feitos: "Fim do apartheid, reconciliação nacional.", impacto: "Símbolo global de paz e justiça racial." },
+      { nome: "Carolus Rex", anos: "1697–1718", tipo: "imperador", origem: "Suécia", continente: "Europa", seculo: "XVIII", feitos: "Guerras contra Rússia, Polônia, resistência até a morte.", impacto: "Fim da supremacia militar sueca e inspiração cultural." }
+    ];
+    function renderCards() {
+      const tipo = document.getElementById("tipoFiltro").value;
+      const continente = document.getElementById("continenteFiltro").value;
+      const seculo = document.getElementById("seculoFiltro").value;
+      const container = document.getElementById("timeline");
+      container.innerHTML = "";
+      dados.filter(l =>
+        (!tipo || l.tipo === tipo) &&
+        (!continente || l.continente === continente) &&
+        (!seculo || l.seculo === seculo)
+      ).forEach(lider => {
+        const card = document.createElement("div");
+        card.className = `card ${lider.tipo}`;
+        card.innerHTML = `
+          <div class="label">${lider.nome} (${lider.anos})</div>
+          <div><strong>Origem:</strong> ${lider.origem}</div>
+          <div><strong>Feitos:</strong> ${lider.feitos}</div>
+          <div><strong>Impacto:</strong> ${lider.impacto}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+    document.querySelectorAll("select").forEach(el => el.addEventListener("change", renderCards));
+    renderCards();
+  </script>
+</body>
+</html>
