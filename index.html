@@ -13,6 +13,16 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
         }
     </style>
 </head>
@@ -24,7 +34,7 @@
 
         function PerguntaInterativa() {
             const [showResult, setShowResult] = useState(false);
-            const [noButtonPosition, setNoButtonPosition] = useState({ top: 60, left: 50 });
+            const [noButtonPosition, setNoButtonPosition] = useState({ top: 70, left: 70 });
             const containerRef = useRef(null);
             const noButtonRef = useRef(null);
 
@@ -36,29 +46,32 @@
                 if (!containerRef.current || !noButtonRef.current) return;
 
                 const button = noButtonRef.current.getBoundingClientRect();
-
-                // Calcula a distância do mouse ao botão
                 const buttonCenterX = button.left + button.width / 2;
                 const buttonCenterY = button.top + button.height / 2;
                 const distance = Math.sqrt(
                     Math.pow(mouseX - buttonCenterX, 2) + Math.pow(mouseY - buttonCenterY, 2)
                 );
 
-                // Se o mouse estiver muito perto (150px), move o botão
-                if (distance < 150) {
-                    const maxX = 90;
-                    const maxY = 90;
-                    const minX = 10;
-                    const minY = 10;
+                // Detecta proximidade (120px em mobile, 150px em desktop)
+                const isMobile = window.innerWidth < 768;
+                const detectionRadius = isMobile ? 120 : 150;
 
-                    // Gera uma nova posição aleatória longe do mouse
+                if (distance < detectionRadius) {
+                    const maxX = 85;
+                    const maxY = 85;
+                    const minX = 15;
+                    const minY = 15;
+
                     let newX, newY;
+                    let attempts = 0;
                     do {
                         newX = Math.random() * (maxX - minX) + minX;
                         newY = Math.random() * (maxY - minY) + minY;
+                        attempts++;
                     } while (
-                        Math.abs(newX - noButtonPosition.left) < 20 &&
-                        Math.abs(newY - noButtonPosition.top) < 20
+                        attempts < 10 &&
+                        Math.abs(newX - noButtonPosition.left) < 25 &&
+                        Math.abs(newY - noButtonPosition.top) < 25
                     );
 
                     setNoButtonPosition({ top: newY, left: newX });
@@ -72,18 +85,40 @@
                     }
                 };
 
+                const handleTouchMove = (e) => {
+                    if (!showResult && e.touches.length > 0) {
+                        moveNoButton(e.touches[0].clientX, e.touches[0].clientY);
+                    }
+                };
+
                 window.addEventListener('mousemove', handleMouseMove);
-                return () => window.removeEventListener('mousemove', handleMouseMove);
+                window.addEventListener('touchmove', handleTouchMove);
+                
+                return () => {
+                    window.removeEventListener('mousemove', handleMouseMove);
+                    window.removeEventListener('touchmove', handleTouchMove);
+                };
             }, [noButtonPosition, showResult]);
 
             if (showResult) {
                 return (
-                    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-pink-500 via-red-500 to-orange-500">
-                        <div className="text-center animate-bounce">
-                            <h1 className="text-9xl font-black text-white drop-shadow-2xl tracking-wider">
+                    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-pink-500 via-red-500 to-orange-500 p-4">
+                        <div className="text-center max-w-2xl w-full">
+                            <h1 className="text-6xl sm:text-8xl md:text-9xl font-black text-white drop-shadow-2xl tracking-wider mb-8 animate-bounce">
                                 HOJE TEM
                             </h1>
-                            <p className="text-4xl text-white mt-8 animate-pulse">🔥🔥🔥</p>
+                            
+                            <div className="float-animation mb-6">
+                                <img 
+                                    src="v9kapitv61v41.webp" 
+                                    alt="Celebration" 
+                                    className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 mx-auto rounded-full object-cover shadow-2xl border-4 border-white"
+                                />
+                            </div>
+                            
+                            <p className="text-3xl sm:text-4xl md:text-5xl text-white mt-6 animate-pulse">
+                                🔥🔥🔥
+                            </p>
                         </div>
                     </div>
                 );
@@ -92,23 +127,25 @@
             return (
                 <div
                     ref={containerRef}
-                    className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 overflow-hidden"
+                    className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 overflow-hidden p-4"
                 >
-                    <div className="text-center space-y-12 z-10 px-4">
-                        <h1 className="text-5xl md:text-7xl font-bold text-white drop-shadow-2xl leading-tight">
+                    <div className="text-center w-full max-w-4xl">
+                        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-2xl leading-tight mb-12 px-4">
                             Posso comer seu c* hoje?
                         </h1>
 
-                        <div className="relative h-64">
-                            {/* Botão Sim */}
-                            <button
-                                onClick={handleYes}
-                                className="absolute left-1/2 transform -translate-x-32 bg-green-500 hover:bg-green-600 text-white text-3xl font-bold py-6 px-16 rounded-full shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95"
-                            >
-                                Sim 😏
-                            </button>
+                        <div className="relative h-48 sm:h-56 md:h-64">
+                            {/* Botão Sim - posição fixa */}
+                            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                <button
+                                    onClick={handleYes}
+                                    className="bg-green-500 hover:bg-green-600 active:bg-green-700 text-white text-xl sm:text-2xl md:text-3xl font-bold py-4 px-12 sm:py-5 sm:px-16 md:py-6 md:px-20 rounded-full shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95 touch-manipulation"
+                                >
+                                    Sim 😏
+                                </button>
+                            </div>
 
-                            {/* Botão Não - posição absoluta que muda */}
+                            {/* Botão Não - foge do mouse/toque */}
                             <button
                                 ref={noButtonRef}
                                 style={{
@@ -116,16 +153,26 @@
                                     top: `${noButtonPosition.top}%`,
                                     left: `${noButtonPosition.left}%`,
                                     transform: 'translate(-50%, -50%)',
+                                    transition: 'all 0.3s ease-out',
                                 }}
-                                className="bg-red-500 text-white text-3xl font-bold py-6 px-16 rounded-full shadow-2xl transition-all duration-300 cursor-pointer hover:scale-110"
+                                className="bg-red-500 text-white text-xl sm:text-2xl md:text-3xl font-bold py-4 px-12 sm:py-5 sm:px-16 md:py-6 md:px-20 rounded-full shadow-2xl hover:scale-110 touch-manipulation"
                                 onMouseEnter={(e) => {
                                     const rect = e.currentTarget.getBoundingClientRect();
                                     moveNoButton(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                                }}
+                                onTouchStart={(e) => {
+                                    if (e.touches.length > 0) {
+                                        moveNoButton(e.touches[0].clientX, e.touches[0].clientY);
+                                    }
                                 }}
                             >
                                 Não 🙅
                             </button>
                         </div>
+
+                        <p className="text-white text-sm sm:text-base mt-8 opacity-75">
+                            Tente clicar no botão "Não" 😉
+                        </p>
                     </div>
                 </div>
             );
