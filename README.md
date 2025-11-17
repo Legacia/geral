@@ -1,1 +1,0 @@
-# linha-do-tempo-lideres
