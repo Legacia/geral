@@ -1,83 +1,138 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Linha do Tempo de Líderes Históricos</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f9f9f9; color: #333; margin: 0; padding: 2rem; }
-    h1 { text-align: center; margin-bottom: 2rem; }
-    .filters { display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
-    .filters select { padding: 0.5rem; font-size: 1rem; }
-    .card { border-radius: 8px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .totalitario { background: #ffe5e5; }
-    .imperador { background: #e5f0ff; }
-    .presidente { background: #e5ffe5; }
-    .label { display: inline-block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: bold; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pergunta Importante</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
-  <h1>Linha do Tempo de Líderes Históricos</h1>
-  <div class="filters">
-    <select id="tipoFiltro">
-      <option value="">Todos os Tipos</option>
-      <option value="imperador">Imperadores</option>
-      <option value="presidente">Presidentes</option>
-      <option value="totalitario">Totalitários</option>
-    </select>
-    <select id="continenteFiltro">
-      <option value="">Todos os Continentes</option>
-      <option value="Europa">Europa</option>
-      <option value="Ásia">Ásia</option>
-      <option value="África">África</option>
-      <option value="América">América</option>
-    </select>
-    <select id="seculoFiltro">
-      <option value="">Todos os Séculos</option>
-      <option value="VI">Século VI</option>
-      <option value="VIII">Século VIII</option>
-      <option value="XIII">Século XIII</option>
-      <option value="XVII">Século XVII</option>
-      <option value="XVIII">Século XVIII</option>
-      <option value="XIX">Século XIX</option>
-      <option value="XX">Século XX</option>
-    </select>
-  </div>
-  <div id="timeline"></div>
-  <script>
-    const dados = [
-      { nome: "Justinianus I", anos: "527–565", tipo: "imperador", origem: "Império Bizantino", continente: "Europa", seculo: "VI", feitos: "Reconquista do Mediterrâneo ocidental, Corpus Juris Civilis.", impacto: "Influenciou o Direito Ocidental por séculos." },
-      { nome: "Carlos Magno", anos: "768–814", tipo: "imperador", origem: "França", continente: "Europa", seculo: "VIII", feitos: "Unificação da Europa ocidental, Renascença Carolíngia.", impacto: "Precursor do ideal de Europa unificada." },
-      { nome: "Adolf Hitler", anos: "1933–1945", tipo: "totalitario", origem: "Alemanha", continente: "Europa", seculo: "XX", feitos: "Nazismo, Segunda Guerra Mundial, Holocausto.", impacto: "Reformulação da ordem mundial pós-guerra." },
-      { nome: "Getúlio Vargas", anos: "1930–1945, 1951–1954", tipo: "presidente", origem: "Brasil", continente: "América", seculo: "XX", feitos: "Criação da CLT, Estado Novo, nacionalizações.", impacto: "Base do modelo trabalhista brasileiro." },
-      { nome: "Joseph Stalin", anos: "1924–1953", tipo: "totalitario", origem: "URSS", continente: "Europa", seculo: "XX", feitos: "Industrialização forçada, Grande Expurgo, vitória na 2ª Guerra.", impacto: "Estabeleceu o bloco soviético e influenciou a Guerra Fria." },
-      { nome: "Benito Mussolini", anos: "1922–1943", tipo: "totalitario", origem: "Itália", continente: "Europa", seculo: "XX", feitos: "Criação do fascismo, aliança com Hitler, expansão colonial.", impacto: "Modelo para regimes autoritários no século XX." },
-      { nome: "Nelson Mandela", anos: "1994–1999", tipo: "presidente", origem: "África do Sul", continente: "África", seculo: "XX", feitos: "Fim do apartheid, reconciliação nacional.", impacto: "Símbolo global de paz e justiça racial." },
-      { nome: "Carolus Rex", anos: "1697–1718", tipo: "imperador", origem: "Suécia", continente: "Europa", seculo: "XVIII", feitos: "Guerras contra Rússia, Polônia, resistência até a morte.", impacto: "Fim da supremacia militar sueca e inspiração cultural." }
-    ];
-    function renderCards() {
-      const tipo = document.getElementById("tipoFiltro").value;
-      const continente = document.getElementById("continenteFiltro").value;
-      const seculo = document.getElementById("seculoFiltro").value;
-      const container = document.getElementById("timeline");
-      container.innerHTML = "";
-      dados.filter(l =>
-        (!tipo || l.tipo === tipo) &&
-        (!continente || l.continente === continente) &&
-        (!seculo || l.seculo === seculo)
-      ).forEach(lider => {
-        const card = document.createElement("div");
-        card.className = `card ${lider.tipo}`;
-        card.innerHTML = `
-          <div class="label">${lider.nome} (${lider.anos})</div>
-          <div><strong>Origem:</strong> ${lider.origem}</div>
-          <div><strong>Feitos:</strong> ${lider.feitos}</div>
-          <div><strong>Impacto:</strong> ${lider.impacto}</div>
-        `;
-        container.appendChild(card);
-      });
-    }
-    document.querySelectorAll("select").forEach(el => el.addEventListener("change", renderCards));
-    renderCards();
-  </script>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useRef, useEffect } = React;
+
+        function PerguntaInterativa() {
+            const [showResult, setShowResult] = useState(false);
+            const [noButtonPosition, setNoButtonPosition] = useState({ top: 60, left: 50 });
+            const containerRef = useRef(null);
+            const noButtonRef = useRef(null);
+
+            const handleYes = () => {
+                setShowResult(true);
+            };
+
+            const moveNoButton = (mouseX, mouseY) => {
+                if (!containerRef.current || !noButtonRef.current) return;
+
+                const button = noButtonRef.current.getBoundingClientRect();
+
+                // Calcula a distância do mouse ao botão
+                const buttonCenterX = button.left + button.width / 2;
+                const buttonCenterY = button.top + button.height / 2;
+                const distance = Math.sqrt(
+                    Math.pow(mouseX - buttonCenterX, 2) + Math.pow(mouseY - buttonCenterY, 2)
+                );
+
+                // Se o mouse estiver muito perto (150px), move o botão
+                if (distance < 150) {
+                    const maxX = 90;
+                    const maxY = 90;
+                    const minX = 10;
+                    const minY = 10;
+
+                    // Gera uma nova posição aleatória longe do mouse
+                    let newX, newY;
+                    do {
+                        newX = Math.random() * (maxX - minX) + minX;
+                        newY = Math.random() * (maxY - minY) + minY;
+                    } while (
+                        Math.abs(newX - noButtonPosition.left) < 20 &&
+                        Math.abs(newY - noButtonPosition.top) < 20
+                    );
+
+                    setNoButtonPosition({ top: newY, left: newX });
+                }
+            };
+
+            useEffect(() => {
+                const handleMouseMove = (e) => {
+                    if (!showResult) {
+                        moveNoButton(e.clientX, e.clientY);
+                    }
+                };
+
+                window.addEventListener('mousemove', handleMouseMove);
+                return () => window.removeEventListener('mousemove', handleMouseMove);
+            }, [noButtonPosition, showResult]);
+
+            if (showResult) {
+                return (
+                    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-pink-500 via-red-500 to-orange-500">
+                        <div className="text-center animate-bounce">
+                            <h1 className="text-9xl font-black text-white drop-shadow-2xl tracking-wider">
+                                HOJE TEM
+                            </h1>
+                            <p className="text-4xl text-white mt-8 animate-pulse">🔥🔥🔥</p>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div
+                    ref={containerRef}
+                    className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 overflow-hidden"
+                >
+                    <div className="text-center space-y-12 z-10 px-4">
+                        <h1 className="text-5xl md:text-7xl font-bold text-white drop-shadow-2xl leading-tight">
+                            Posso comer seu c* hoje?
+                        </h1>
+
+                        <div className="relative h-64">
+                            {/* Botão Sim */}
+                            <button
+                                onClick={handleYes}
+                                className="absolute left-1/2 transform -translate-x-32 bg-green-500 hover:bg-green-600 text-white text-3xl font-bold py-6 px-16 rounded-full shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95"
+                            >
+                                Sim 😏
+                            </button>
+
+                            {/* Botão Não - posição absoluta que muda */}
+                            <button
+                                ref={noButtonRef}
+                                style={{
+                                    position: 'absolute',
+                                    top: `${noButtonPosition.top}%`,
+                                    left: `${noButtonPosition.left}%`,
+                                    transform: 'translate(-50%, -50%)',
+                                }}
+                                className="bg-red-500 text-white text-3xl font-bold py-6 px-16 rounded-full shadow-2xl transition-all duration-300 cursor-pointer hover:scale-110"
+                                onMouseEnter={(e) => {
+                                    const rect = e.currentTarget.getBoundingClientRect();
+                                    moveNoButton(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                                }}
+                            >
+                                Não 🙅
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<PerguntaInterativa />);
+    </script>
 </body>
 </html>
